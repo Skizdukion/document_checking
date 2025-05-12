@@ -9,20 +9,21 @@ api_key = os.environ.get("GOOGLE_API_KEY")
 if api_key:
     genai.configure(api_key=api_key)
     # Select the model
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-2.0-flash')
 else:
     model = None
     print("Warning: GOOGLE_API_KEY not found. AI validation will be limited.")
 
+
 def validate_with_ai(processed_docs: Dict[str, Any], personal_data: Dict[str, Any], academic_data: Dict[str, Any]) -> Dict[str, Any]:
     """
     Use Gemini AI to validate documents by cross-referencing information.
-    
+
     Args:
         processed_docs (dict): Dictionary containing processed documents
         personal_data (dict): Dictionary containing personal information
         academic_data (dict): Dictionary containing academic information
-        
+
     Returns:
         dict: Validation results with issues and overall status
     """
@@ -32,7 +33,7 @@ def validate_with_ai(processed_docs: Dict[str, Any], personal_data: Dict[str, An
         "academic_data": academic_data,
         "documents": {}
     }
-    
+
     # Add document text to context
     for doc_type, doc_data in processed_docs.items():
         if doc_data.get('text'):
@@ -40,7 +41,7 @@ def validate_with_ai(processed_docs: Dict[str, Any], personal_data: Dict[str, An
                 "text": doc_data.get('text', ''),
                 "metadata": doc_data.get('metadata', {})
             }
-    
+
     # Generate system prompt for Gemini
     system_prompt = """
     You are an expert academic document validator. Your task is to analyze academic documents and verify their authenticity
@@ -59,16 +60,17 @@ def validate_with_ai(processed_docs: Dict[str, Any], personal_data: Dict[str, An
     
     Return your analysis as a structured assessment.
     """
-    
+
     # Prepare prompt for document validation
     # Build document examples separately to avoid nested f-strings with backslashes
     doc_examples = ""
     for doc_type, doc_data in validation_context['documents'].items():
         doc_text = doc_data.get('text', 'No text extracted')
         # Truncate text to first 1000 chars
-        truncated_text = doc_text[:1000] + "..." if len(doc_text) > 1000 else doc_text
+        truncated_text = doc_text[:1000] + \
+            "..." if len(doc_text) > 1000 else doc_text
         doc_examples += f"--- {doc_type.upper()} DOCUMENT ---\n{truncated_text}\n\n"
-    
+
     # First part of the prompt with user data
     validation_prompt_part1 = f"""
     Here is the personal information provided by the user:
@@ -86,7 +88,7 @@ def validate_with_ai(processed_docs: Dict[str, Any], personal_data: Dict[str, An
     
     Return your analysis in the following JSON format:
     """
-    
+
     # Second part with JSON template (avoiding f-string for this part)
     validation_prompt_part2 = """
     {
@@ -116,10 +118,10 @@ def validate_with_ai(processed_docs: Dict[str, Any], personal_data: Dict[str, An
         "overall_status": "Passed|Warning|Failed"
     }
     """
-    
+
     # Combine the two parts
     validation_prompt = validation_prompt_part1 + validation_prompt_part2
-    
+
     # Check if we have a model available
     if model is None:
         # If no API key or model, return a fallback validation
@@ -131,17 +133,17 @@ def validate_with_ai(processed_docs: Dict[str, Any], personal_data: Dict[str, An
             "document": "all"
         })
         return fallback_result
-        
+
     try:
         # Generate validation response from Gemini
         response = model.generate_content(
             [system_prompt, validation_prompt],
             generation_config={"temperature": 0.2}
         )
-        
+
         # Extract and parse the response
         validation_result = parse_ai_response(response.text)
-        
+
         # If we couldn't parse the response, create a fallback result
         if not validation_result:
             validation_result = generate_fallback_validation()
@@ -151,9 +153,9 @@ def validate_with_ai(processed_docs: Dict[str, Any], personal_data: Dict[str, An
                 "severity": "warning",
                 "document": "all"
             })
-        
+
         return validation_result
-    
+
     except Exception as e:
         # Handle errors by returning a fallback validation result
         fallback_result = generate_fallback_validation()
@@ -165,33 +167,34 @@ def validate_with_ai(processed_docs: Dict[str, Any], personal_data: Dict[str, An
         })
         return fallback_result
 
+
 def parse_ai_response(response_text: str) -> Optional[Dict[str, Any]]:
     """
     Parse the AI response into a structured validation result.
-    
+
     Args:
         response_text (str): The response text from the AI
-        
+
     Returns:
         Optional[dict]: Structured validation result or None if parsing fails
     """
     import json
     import re
-    
+
     # Try to extract JSON from the response
     json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
-    
+
     if json_match:
         try:
             # Parse the JSON response
             validation_result = json.loads(json_match.group(0))
-            
+
             # Calculate overall status if not provided
             if "overall_status" not in validation_result:
                 # Check for critical issues
                 critical_issues = 0
                 warning_issues = 0
-                
+
                 for category in ['personal_validation', 'academic_validation', 'document_authenticity', 'cross_document_consistency']:
                     if category in validation_result:
                         for issue in validation_result[category].get('issues', []):
@@ -199,25 +202,26 @@ def parse_ai_response(response_text: str) -> Optional[Dict[str, Any]]:
                                 critical_issues += 1
                             elif issue.get('severity') == 'warning':
                                 warning_issues += 1
-                
+
                 if critical_issues > 0:
                     validation_result['overall_status'] = 'Failed'
                 elif warning_issues > 0:
                     validation_result['overall_status'] = 'Warning'
                 else:
                     validation_result['overall_status'] = 'Passed'
-            
+
             return validation_result
-        
+
         except json.JSONDecodeError:
             return None
-    
+
     return None
+
 
 def generate_fallback_validation() -> Dict[str, Any]:
     """
     Generate a fallback validation result when AI validation fails.
-    
+
     Returns:
         dict: Basic validation result structure
     """
