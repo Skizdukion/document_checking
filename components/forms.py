@@ -1,31 +1,35 @@
 import streamlit as st
 from datetime import datetime
 
+
 def render_personal_form():
     """Render the personal information form and handle submission."""
     with st.form("personal_info_form"):
         # Two columns for better layout
         col1, col2 = st.columns(2)
-        
+
         with col1:
-            name = st.text_input("Full Name", 
-                                value=st.session_state.personal_data.get('name', ''),
-                                help="Enter your full name as it appears on your documents")
-            
-            dob = st.date_input("Date of Birth", 
-                              min_value=datetime(1940, 1, 1),
-                              max_value=datetime.now(),
-                              help="Select your date of birth")
-            
-            citizenship = st.text_input("Citizenship/Nationality", 
-                                      value=st.session_state.personal_data.get('citizenship', ''),
-                                      help="Enter your citizenship or nationality")
-            
-            language = st.selectbox("Preferred Language", 
-                                  options=["English", "Spanish", "French", "German", "Chinese", "Arabic", "Other"],
-                                  index=0,
-                                  help="Select your preferred language")
-        
+            name = st.text_input("Full Name",
+                                 value=st.session_state.personal_data.get(
+                                     'name', ''),
+                                 help="Enter your full name as it appears on your documents")
+
+            dob = st.date_input("Date of Birth",
+                                min_value=datetime(1940, 1, 1),
+                                max_value=datetime.now(),
+                                help="Select your date of birth")
+
+            citizenship = st.text_input("Citizenship/Nationality",
+                                        value=st.session_state.personal_data.get(
+                                            'citizenship', ''),
+                                        help="Enter your citizenship or nationality")
+
+            language = st.selectbox("Preferred Language",
+                                    options=["English", "Spanish", "French",
+                                             "German", "Chinese", "Arabic", "Other"],
+                                    index=0,
+                                    help="Select your preferred language")
+
         with col2:
             gender = st.selectbox("Gender", 
                                   options=["Male", "Female", "Non-binary", "Prefer not to say", "Other"],
@@ -46,7 +50,7 @@ def render_personal_form():
         
         # Form submission
         submitted = st.form_submit_button("Save & Continue")
-        
+
         if submitted:
             # Validate inputs
             if not name:
@@ -65,17 +69,18 @@ def render_personal_form():
                     'phone': phone,
                     'address': address
                 }
-                
+
                 # Move to next step
                 st.session_state.step = 2
                 st.rerun()
+
 
 def render_academic_form():
     """Render the academic information form and handle submission."""
     with st.form("academic_info_form"):
         # Two columns for better layout
         col1, col2 = st.columns(2)
-        
+
         with col1:
             university = st.text_input("University/Institution", 
                                      value=st.session_state.academic_data.get('university', ''),
@@ -117,14 +122,14 @@ def render_academic_form():
         col1, col2 = st.columns(2)
         with col1:
             back_button = st.form_submit_button("Back to Personal Info")
-        
+
         with col2:
             continue_button = st.form_submit_button("Save & Continue")
-        
+
         if back_button:
             st.session_state.step = 1
             st.rerun()
-        
+
         if continue_button:
             # Validate inputs
             if not university:
@@ -142,16 +147,17 @@ def render_academic_form():
                     'graduation_year': graduation_year,
                     'graduation_season': graduation_season
                 }
-                
+
                 # Move to next step
                 st.session_state.step = 3
                 st.rerun()
+
 
 def render_document_upload():
     """Render the document upload form and handle submission."""
     st.write("Please upload the following required documents for validation:")
     st.write("Supported formats: PDF, JPG, JPEG, PNG")
-    
+
     # Explanation of document types
     with st.expander("What documents do I need to upload?"):
         st.markdown("""
@@ -160,37 +166,37 @@ def render_document_upload():
         - **Transcripts**: Your academic transcript showing courses and grades
         - **Union Letter**: A letter from your student union or similar body confirming membership
         """)
-    
+
     with st.form("document_upload_form"):
         # Document uploads
-        student_id = st.file_uploader("Student ID Letter (Required)", 
-                                    type=["pdf", "jpg", "jpeg", "png"],
-                                    help="Upload your official student ID letter")
-        
-        student_record = st.file_uploader("Student Record (Required)", 
-                                        type=["pdf", "jpg", "jpeg", "png"],
-                                        help="Upload your official student record")
-        
-        transcript = st.file_uploader("Academic Transcript (Required)", 
-                                    type=["pdf", "jpg", "jpeg", "png"],
-                                    help="Upload your academic transcript")
-        
-        union_letter = st.file_uploader("Student Union Letter (Optional)", 
+        student_id = st.file_uploader("Student ID Letter (Required)",
                                       type=["pdf", "jpg", "jpeg", "png"],
-                                      help="Upload your student union letter if available")
-        
+                                      help="Upload your official student ID letter")
+
+        student_record = st.file_uploader("Student Record (Required)",
+                                          type=["pdf", "jpg", "jpeg", "png"],
+                                          help="Upload your official student record")
+
+        transcript = st.file_uploader("Academic Transcript (Required)",
+                                      type=["pdf", "jpg", "jpeg", "png"],
+                                      help="Upload your academic transcript")
+
+        union_letter = st.file_uploader("Student Union Letter (Optional)",
+                                        type=["pdf", "jpg", "jpeg", "png"],
+                                        help="Upload your student union letter if available")
+
         # Navigation buttons
         col1, col2 = st.columns(2)
         with col1:
             back_button = st.form_submit_button("Back to Academic Info")
-        
+
         with col2:
             validate_button = st.form_submit_button("Upload & Validate")
-        
+
         if back_button:
             st.session_state.step = 2
             st.rerun()
-        
+
         if validate_button:
             # Check required documents
             missing_docs = []
@@ -200,9 +206,10 @@ def render_document_upload():
                 missing_docs.append("Student Record")
             if transcript is None:
                 missing_docs.append("Academic Transcript")
-            
+
             if missing_docs:
-                st.error(f"Please upload the following required documents: {', '.join(missing_docs)}")
+                st.error(
+                    f"Please upload the following required documents: {', '.join(missing_docs)}")
             else:
                 # Store uploaded documents in session state
                 st.session_state.documents = {
@@ -211,7 +218,7 @@ def render_document_upload():
                     'transcript': transcript,
                     'union_letter': union_letter
                 }
-                
+
                 # Move to next step
                 st.session_state.step = 4
                 st.rerun()
