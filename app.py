@@ -97,7 +97,7 @@ def main():
                     saved = save_validation_data(
                         st.session_state.personal_data,
                         st.session_state.academic_data,
-                        validation_results
+                        st.session_state.validation_results
                     )
                     if saved:
                         st.success("Validation data saved successfully")
