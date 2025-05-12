@@ -1,4 +1,5 @@
 modules = ["python-3.11"]
+run = "streamlit run app.py"
 
 [nix]
 channel = "stable-24_05"
@@ -6,10 +7,9 @@ packages = ["freetype", "lcms2", "libGL", "libGLU", "libimagequant", "libjpeg", 
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["streamlit", "run", "app.py", "--server.port", "5000"]
+run = ["sh", "-c", "streamlit run app.py"]
 
 [workflows]
-runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"
