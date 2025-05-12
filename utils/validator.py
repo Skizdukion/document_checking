@@ -129,7 +129,7 @@ def validate_personal_info(processed_docs, personal_data):
                 })
     
     # Validate other personal info (citizenship, address, etc.)
-    for field in ['citizenship', 'address', 'pronouns']:
+    for field in ['citizenship', 'address', 'gender']:
         if personal_data.get(field):
             field_value = personal_data[field].lower()
             field_found = False
@@ -193,6 +193,8 @@ def validate_academic_info(processed_docs, academic_data):
     university = academic_data.get('university', '').lower()
     study_mode = academic_data.get('study_mode', '').lower()
     grade = academic_data.get('grade', '').lower()
+    graduation_year = academic_data.get('graduation_year', '')
+    graduation_season = academic_data.get('graduation_season', '').lower()
     
     # Check for major in documents
     if major:
@@ -293,6 +295,43 @@ def validate_academic_info(processed_docs, academic_data):
                 'severity': 'warning'
             })
     
+    # Check for graduation year and season if provided
+    if graduation_year and 'student_record' in processed_docs:
+        student_record = processed_docs['student_record']
+        metadata = student_record.get('metadata', {})
+        record_graduation_year = metadata.get('graduation_year')
+        
+        if not record_graduation_year:
+            validation_result['issues'].append({
+                'type': 'graduation_year_not_found',
+                'description': 'Graduation year not found in student record',
+                'severity': 'warning'
+            })
+        elif graduation_year != record_graduation_year:
+            validation_result['issues'].append({
+                'type': 'graduation_year_mismatch',
+                'description': f'Graduation year in form ({graduation_year}) does not match record ({record_graduation_year})',
+                'severity': 'warning'
+            })
+            
+    if graduation_season and 'student_record' in processed_docs:
+        student_record = processed_docs['student_record']
+        metadata = student_record.get('metadata', {})
+        record_graduation_season = metadata.get('graduation_season', '').lower()
+        
+        if not record_graduation_season:
+            validation_result['issues'].append({
+                'type': 'graduation_season_not_found',
+                'description': 'Graduation season not found in student record',
+                'severity': 'warning'
+            })
+        elif graduation_season != record_graduation_season.lower():
+            validation_result['issues'].append({
+                'type': 'graduation_season_mismatch',
+                'description': f'Graduation season in form ({graduation_season}) does not match record ({record_graduation_season})',
+                'severity': 'warning'
+            })
+    
     # Set status based on issues
     critical_issues = sum(1 for issue in validation_result['issues'] if issue['severity'] == 'critical')
     warning_issues = sum(1 for issue in validation_result['issues'] if issue['severity'] == 'warning')
@@ -387,12 +426,12 @@ def validate_document_authenticity(processed_docs):
                     'severity': 'warning'
                 })
             
-            # Check for enrollment date
-            if not metadata.get('enrollment_date'):
+            # Check for student status instead of enrollment date
+            if not metadata.get('status'):
                 validation_result['issues'].append({
-                    'type': 'missing_enrollment_date',
+                    'type': 'missing_status',
                     'document': doc_type,
-                    'description': 'No enrollment date found in student record',
+                    'description': 'No student status found in student record',
                     'severity': 'warning'
                 })
         

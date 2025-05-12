@@ -10,10 +10,11 @@ import numpy as np
 try:
     nlp = spacy.load("en_core_web_sm")
 except:
-    # If model isn't available, download a smaller one
-    import spacy.cli
-    spacy.cli.download("en_core_web_sm")
-    nlp = spacy.load("en_core_web_sm")
+    # If model isn't available, use a simple pipeline instead
+    nlp = spacy.blank("en")
+    # Create a simple pipeline that will recognize entities
+    nlp.add_pipe("ner")
+    print("Using blank English model as fallback")
 
 def process_documents(uploaded_documents):
     """
@@ -265,19 +266,35 @@ def extract_student_record_metadata(doc):
     """Extract metadata specific to student record documents"""
     text = doc.text
     
-    # Extract enrollment date
+    # Extract graduation year and season
     import re
-    enrollment_date = None
-    date_patterns = [
-        r"Enrollment Date\s*:\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
-        r"Enrolled on\s*:\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
-        r"Date of Enrollment\s*:\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})"
+    graduation_year = None
+    graduation_season = None
+    
+    # Look for graduation year
+    year_patterns = [
+        r"Graduation Year\s*:\s*(\d{4})",
+        r"Year of Graduation\s*:\s*(\d{4})",
+        r"Class of\s*(\d{4})"
     ]
     
-    for pattern in date_patterns:
+    for pattern in year_patterns:
         match = re.search(pattern, text)
         if match:
-            enrollment_date = match.group(1)
+            graduation_year = match.group(1)
+            break
+            
+    # Look for graduation season
+    season_patterns = [
+        r"Graduation Season\s*:\s*(Spring|Summer|Autumn|Winter)",
+        r"(Spring|Summer|Autumn|Winter)\s+Graduation",
+        r"Graduating in\s+(Spring|Summer|Autumn|Winter)"
+    ]
+    
+    for pattern in season_patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            graduation_season = match.group(1)
             break
     
     # Extract student status
@@ -295,7 +312,8 @@ def extract_student_record_metadata(doc):
             break
     
     return {
-        'enrollment_date': enrollment_date,
+        'graduation_year': graduation_year,
+        'graduation_season': graduation_season,
         'status': status,
         'document_type': 'Student Record',
     }
