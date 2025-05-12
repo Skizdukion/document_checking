@@ -13,7 +13,9 @@ except:
     # If model isn't available, use a simple pipeline instead
     nlp = spacy.blank("en")
     # Create a simple pipeline that will recognize entities
-    nlp.add_pipe("ner")
+    ner = nlp.create_pipe("ner")
+    nlp.add_pipe("ner", last=True)
+    nlp.initialize()
     print("Using blank English model as fallback")
 
 

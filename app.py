@@ -34,7 +34,7 @@ def main():
 
     if 'validation_results' not in st.session_state:
         st.session_state.validation_results = None
-        
+
     # Add sidebar for navigation
     with st.sidebar:
         st.title("Navigation")
@@ -44,7 +44,7 @@ def main():
                 if key in st.session_state:
                     del st.session_state[key]
             st.rerun()
-        
+
         # Only show View History button if user has completed personal info step
         if 'email' in st.session_state.personal_data and st.session_state.personal_data['email']:
             if st.button("View Validation History"):
@@ -77,14 +77,21 @@ def main():
         # Process and validate documents if not already done
         if st.session_state.validation_results is None:
             with st.spinner("Processing and validating documents..."):
-                processed_docs = process_documents(st.session_state.documents)
-                validation_results = validate_with_ai(
-                    processed_docs,
+                @st.cache_data(ttl=3600)
+                def process_and_validate(documents, personal_data, academic_data):
+                    processed_docs = process_documents(documents)
+                    return validate_with_ai(
+                        processed_docs,
+                        personal_data,
+                        academic_data
+                    )
+
+                validation_results = process_and_validate(
+                    st.session_state.documents,
                     st.session_state.personal_data,
                     st.session_state.academic_data
                 )
-                st.session_state.validation_results = validation_results
-                
+
                 # Save validation data to the database
                 with st.spinner("Saving validation data to database..."):
                     saved = save_validation_data(
