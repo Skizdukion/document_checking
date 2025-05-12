@@ -86,7 +86,7 @@ def main():
                         academic_data
                     )
 
-                validation_results = process_and_validate(
+                st.session_state.validation_results = process_and_validate(
                     st.session_state.documents,
                     st.session_state.personal_data,
                     st.session_state.academic_data
