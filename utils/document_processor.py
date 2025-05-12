@@ -276,32 +276,32 @@ def extract_transcript_metadata(doc):
 def extract_student_record_metadata(doc):
     """Extract metadata specific to student record documents"""
     text = doc.text
-    
+
     # Extract graduation year and season
     import re
     graduation_year = None
     graduation_season = None
-    
+
     # Look for graduation year
     year_patterns = [
         r"Graduation Year\s*:\s*(\d{4})",
         r"Year of Graduation\s*:\s*(\d{4})",
         r"Class of\s*(\d{4})"
     ]
-    
+
     for pattern in year_patterns:
         match = re.search(pattern, text)
         if match:
             graduation_year = match.group(1)
             break
-            
+
     # Look for graduation season
     season_patterns = [
         r"Graduation Season\s*:\s*(Spring|Summer|Autumn|Winter)",
         r"(Spring|Summer|Autumn|Winter)\s+Graduation",
         r"Graduating in\s+(Spring|Summer|Autumn|Winter)"
     ]
-    
+
     for pattern in season_patterns:
         match = re.search(pattern, text, re.IGNORECASE)
         if match:

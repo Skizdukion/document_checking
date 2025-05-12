@@ -11,7 +11,7 @@ def render_personal_form():
         with col1:
             name = st.text_input("Full Name",
                                  value=st.session_state.personal_data.get(
-                                     'name', 'Bader Mahmoud Abu Zaid'),
+                                     'name'),
                                  help="Enter your full name as it appears on your documents")
 
             dob = st.date_input("Date of Birth",
@@ -22,32 +22,36 @@ def render_personal_form():
 
             citizenship = st.text_input("Citizenship/Nationality",
                                         value=st.session_state.personal_data.get(
-                                            'citizenship', 'Jordan'),
+                                            'citizenship'),
                                         help="Enter your citizenship or nationality")
 
             language = st.selectbox("Preferred Language",
                                     options=["English", "Spanish", "French",
                                              "German", "Chinese", "Arabic", "Other"],
-                                    index=5,  # Arabic
+                                    index=0,  # Arabic
                                     help="Select your preferred language")
 
         with col2:
-            gender = st.selectbox("Gender", 
-                                  options=["Male", "Female", "Non-binary", "Prefer not to say", "Other"],
+            gender = st.selectbox("Gender",
+                                  options=["Male", "Female", "Non-binary",
+                                           "Prefer not to say", "Other"],
                                   index=0,  # Male
                                   help="Select your gender")
 
-            email = st.text_input("Email Address", 
-                                value=st.session_state.personal_data.get('email', 'baderabuzaid@gmail.com'),
-                                help="Enter your email address")
+            email = st.text_input("Email Address",
+                                  value=st.session_state.personal_data.get(
+                                      'email'),
+                                  help="Enter your email address")
 
-            phone = st.text_input("Phone Number", 
-                                value=st.session_state.personal_data.get('phone', 'Egypt+20 1006854538'),
-                                help="Enter your phone number")
+            phone = st.text_input("Phone Number",
+                                  value=st.session_state.personal_data.get(
+                                      'phone'),
+                                  help="Enter your phone number")
 
-            address = st.text_area("Transcripts Address During your period of study", 
-                                 value=st.session_state.personal_data.get('address', '90th South Str 5th Settlement Cairo New Cairo 11835'),
-                                 help="Enter the address that appears on your transcripts during your study period")
+            address = st.text_area("Transcripts Address During your period of study",
+                                   value=st.session_state.personal_data.get(
+                                       'address'),
+                                   help="Enter the address that appears on your transcripts during your study period")
 
         # Form submission
         submitted = st.form_submit_button("Save & Continue")
@@ -83,41 +87,47 @@ def render_academic_form():
         col1, col2 = st.columns(2)
 
         with col1:
-            university = st.text_input("University/Institution", 
-                                     value=st.session_state.academic_data.get('university', 'University of Southampton'),
-                                     help="Enter the name of your university or institution")
+            university = st.text_input("University/Institution",
+                                       value=st.session_state.academic_data.get(
+                                           'university'),
+                                       help="Enter the name of your university or institution")
 
-            degree_level = st.selectbox("Degree Level", 
-                                      options=["Associate", "Bachelor", "Master", "Doctorate", "Certificate", "Diploma", "Other"],
-                                      index=1,  # Bachelor
-                                      help="Select your degree level")
+            degree_level = st.selectbox("Degree Level",
+                                        options=[
+                                            "Associate", "Bachelor", "Master", "Doctorate", "Certificate", "Diploma", "Other"],
+                                        index=1,  # Bachelor
+                                        help="Select your degree level")
 
-            major = st.text_input("Major/Field of Study", 
-                                value=st.session_state.academic_data.get('major', 'Bachelor of Mechatronic Engineering (BEng)'),
-                                help="Enter your major or field of study")
-
-
+            major = st.text_input("Major/Field of Study",
+                                  value=st.session_state.academic_data.get(
+                                      'major'),
+                                  help="Enter your major or field of study")
 
         with col2:
-            study_mode = st.selectbox("Mode of Study", 
-                                    options=["Full-time", "Part-time", "Mixed Mode (Part Time and Online Study)", "Distance Learning", "Exchange Program", "Other"],
-                                    index=2,  # Mixed Mode
-                                    help="Select your mode of study")
+            study_mode = st.selectbox("Mode of Study",
+                                      options=[
+                                          "Full-time", "Part-time", "Mixed Mode (Part Time and Online Study)", "Distance Learning", "Exchange Program", "Other"],
+                                      index=0,  # Mixed Mode
+                                      help="Select your mode of study")
 
-            grade = st.selectbox("Grade for Transcripts", 
-                                options=["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "Pass", "Fail"],
-                                index=0,  # A
-                                help="Select your grade for transcripts")
+            grade = st.selectbox("Grade for Transcripts",
+                                 options=["A", "A-", "B+", "B", "B-", "C+", "C",
+                                          "C-", "D+", "D", "D-", "F", "Pass", "Fail"],
+                                 index=0,  # A
+                                 help="Select your grade for transcripts")
 
-            graduation_year = st.selectbox("Year of Graduation", 
-                                        options=[str(year) for year in range(datetime.now().year - 10, datetime.now().year + 10)],
-                                        index=list(str(year) for year in range(datetime.now().year - 10, datetime.now().year + 10)).index('2024'),
-                                        help="Select your graduation year")
+            graduation_year = st.selectbox("Year of Graduation",
+                                           options=[str(year) for year in range(
+                                               datetime.now().year - 10, datetime.now().year + 10)],
+                                           index=list(str(year) for year in range(
+                                               datetime.now().year - 10, datetime.now().year + 10)).index('2024'),
+                                           help="Select your graduation year")
 
-            graduation_season = st.selectbox("Graduation Season", 
-                                          options=["Spring", "Summer", "Autumn", "Winter"],
-                                          index=2,  # Autumn
-                                          help="Select your graduation season")
+            graduation_season = st.selectbox("Graduation Season",
+                                             options=[
+                                                 "Spring", "Summer", "Autumn", "Winter"],
+                                             index=0,  # Autumn
+                                             help="Select your graduation season")
 
         # Navigation buttons
         col1, col2 = st.columns(2)
@@ -183,12 +193,13 @@ def render_document_upload():
                                       help="Upload your academic transcript")
 
         diploma = st.file_uploader("Diploma (Optional)",
-                                 type=["pdf", "jpg", "jpeg", "png"],
-                                 help="Upload your diploma certificate if available")
+                                   type=["pdf", "jpg", "jpeg", "png"],
+                                   help="Upload your diploma certificate if available")
 
         graduation_letter = st.file_uploader("Graduation Letter (Optional)",
-                                           type=["pdf", "jpg", "jpeg", "png"],
-                                           help="Upload your graduation confirmation letter if available")
+                                             type=["pdf", "jpg",
+                                                   "jpeg", "png"],
+                                             help="Upload your graduation confirmation letter if available")
 
         union_letter = st.file_uploader("Student Union Letter (Optional)",
                                         type=["pdf", "jpg", "jpeg", "png"],
@@ -209,7 +220,8 @@ def render_document_upload():
         if validate_button:
             # All documents are optional, proceed if at least one document is uploaded
             if not any([student_id, student_record, transcript, diploma, graduation_letter, union_letter]):
-                st.warning("Please upload at least one document for validation")
+                st.warning(
+                    "Please upload at least one document for validation")
                 return
 
             # Store uploaded documents in session state

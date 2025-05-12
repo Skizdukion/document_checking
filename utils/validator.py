@@ -201,7 +201,7 @@ def validate_academic_info(processed_docs, academic_data):
     grade = academic_data.get('grade', '').lower()
     graduation_year = academic_data.get('graduation_year', '')
     graduation_season = academic_data.get('graduation_season', '').lower()
-    
+
     # Check for major in documents
     if major:
         major_found = False
@@ -301,13 +301,13 @@ def validate_academic_info(processed_docs, academic_data):
                 'description': 'No grades found in transcript',
                 'severity': 'warning'
             })
-    
+
     # Check for graduation year and season if provided
     if graduation_year and 'student_record' in processed_docs:
         student_record = processed_docs['student_record']
         metadata = student_record.get('metadata', {})
         record_graduation_year = metadata.get('graduation_year')
-        
+
         if not record_graduation_year:
             validation_result['issues'].append({
                 'type': 'graduation_year_not_found',
@@ -320,12 +320,13 @@ def validate_academic_info(processed_docs, academic_data):
                 'description': f'Graduation year in form ({graduation_year}) does not match record ({record_graduation_year})',
                 'severity': 'warning'
             })
-            
+
     if graduation_season and 'student_record' in processed_docs:
         student_record = processed_docs['student_record']
         metadata = student_record.get('metadata', {})
-        record_graduation_season = metadata.get('graduation_season', '').lower()
-        
+        record_graduation_season = metadata.get(
+            'graduation_season', '').lower()
+
         if not record_graduation_season:
             validation_result['issues'].append({
                 'type': 'graduation_season_not_found',
@@ -338,7 +339,7 @@ def validate_academic_info(processed_docs, academic_data):
                 'description': f'Graduation season in form ({graduation_season}) does not match record ({record_graduation_season})',
                 'severity': 'warning'
             })
-    
+
     # Set status based on issues
     critical_issues = sum(
         1 for issue in validation_result['issues'] if issue['severity'] == 'critical')
@@ -435,7 +436,7 @@ def validate_document_authenticity(processed_docs):
                     'description': 'Student record lacks official letterhead',
                     'severity': 'warning'
                 })
-            
+
             # Check for student status instead of enrollment date
             if not metadata.get('status'):
                 validation_result['issues'].append({

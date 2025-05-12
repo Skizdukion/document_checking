@@ -72,7 +72,8 @@ def main():
 
     elif st.session_state.step == 4:
         st.subheader("Step 4: AI-Powered Validation Results")
-        st.markdown("_Documents are being analyzed by our AI system using Google's Gemini model_")
+        st.markdown(
+            "_Documents are being analyzed by our AI system using Google's Gemini model_")
 
         # Process and validate documents if not already done
         if st.session_state.validation_results is None:
@@ -102,7 +103,8 @@ def main():
                     if saved:
                         st.success("Validation data saved successfully")
                     else:
-                        st.warning("Could not save validation data to database")
+                        st.warning(
+                            "Could not save validation data to database")
 
         # Display validation results
         display_validation_results(st.session_state.validation_results)
