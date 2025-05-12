@@ -44,9 +44,9 @@ def render_personal_form():
                                 value=st.session_state.personal_data.get('phone', ''),
                                 help="Enter your phone number")
             
-            address = st.text_area("Current Address", 
+            address = st.text_area("Transcripts Address During your period of study", 
                                  value=st.session_state.personal_data.get('address', ''),
-                                 help="Enter your current address")
+                                 help="Enter the address that appears on your transcripts during your study period")
         
         # Form submission
         submitted = st.form_submit_button("Save & Continue")

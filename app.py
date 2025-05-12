@@ -1,8 +1,10 @@
 import streamlit as st
 from components.forms import render_personal_form, render_academic_form, render_document_upload
 from components.results import display_validation_results
+from components.history import render_validation_history
 from utils.document_processor import process_documents
 from utils.ai_validator import validate_with_ai
+from utils.database import save_validation_data, get_user_validation_history
 
 
 def main():
@@ -65,6 +67,18 @@ def main():
                     st.session_state.academic_data
                 )
                 st.session_state.validation_results = validation_results
+                
+                # Save validation data to the database
+                with st.spinner("Saving validation data to database..."):
+                    saved = save_validation_data(
+                        st.session_state.personal_data,
+                        st.session_state.academic_data,
+                        validation_results
+                    )
+                    if saved:
+                        st.success("Validation data saved successfully")
+                    else:
+                        st.warning("Could not save validation data to database")
 
         # Display validation results
         display_validation_results(st.session_state.validation_results)
