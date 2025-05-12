@@ -36,19 +36,19 @@ def render_personal_form():
                                   options=["Male", "Female", "Non-binary", "Prefer not to say", "Other"],
                                   index=0,  # Male
                                   help="Select your gender")
-            
+
             email = st.text_input("Email Address", 
                                 value=st.session_state.personal_data.get('email', 'baderabuzaid@gmail.com'),
                                 help="Enter your email address")
-            
+
             phone = st.text_input("Phone Number", 
                                 value=st.session_state.personal_data.get('phone', 'Egypt+20 1006854538'),
                                 help="Enter your phone number")
-            
+
             address = st.text_area("Transcripts Address During your period of study", 
                                  value=st.session_state.personal_data.get('address', '90th South Str 5th Settlement Cairo New Cairo 11835'),
                                  help="Enter the address that appears on your transcripts during your study period")
-        
+
         # Form submission
         submitted = st.form_submit_button("Save & Continue")
 
@@ -86,39 +86,39 @@ def render_academic_form():
             university = st.text_input("University/Institution", 
                                      value=st.session_state.academic_data.get('university', 'University of Southampton'),
                                      help="Enter the name of your university or institution")
-            
+
             degree_level = st.selectbox("Degree Level", 
                                       options=["Associate", "Bachelor", "Master", "Doctorate", "Certificate", "Diploma", "Other"],
                                       index=1,  # Bachelor
                                       help="Select your degree level")
-            
+
             major = st.text_input("Major/Field of Study", 
                                 value=st.session_state.academic_data.get('major', 'Bachelor of Mechatronic Engineering (BEng)'),
                                 help="Enter your major or field of study")
-            
 
-        
+
+
         with col2:
             study_mode = st.selectbox("Mode of Study", 
                                     options=["Full-time", "Part-time", "Mixed Mode (Part Time and Online Study)", "Distance Learning", "Exchange Program", "Other"],
                                     index=2,  # Mixed Mode
                                     help="Select your mode of study")
-            
+
             grade = st.selectbox("Grade for Transcripts", 
                                 options=["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "Pass", "Fail"],
                                 index=0,  # A
                                 help="Select your grade for transcripts")
-            
+
             graduation_year = st.selectbox("Year of Graduation", 
                                         options=[str(year) for year in range(datetime.now().year - 10, datetime.now().year + 10)],
                                         index=list(str(year) for year in range(datetime.now().year - 10, datetime.now().year + 10)).index('2024'),
                                         help="Select your graduation year")
-            
+
             graduation_season = st.selectbox("Graduation Season", 
                                           options=["Spring", "Summer", "Autumn", "Winter"],
                                           index=2,  # Autumn
                                           help="Select your graduation season")
-        
+
         # Navigation buttons
         col1, col2 = st.columns(2)
         with col1:
@@ -170,22 +170,22 @@ def render_document_upload():
 
     with st.form("document_upload_form"):
         # Document uploads
-        student_id = st.file_uploader("Student ID Letter (Required)",
+        student_id = st.file_uploader("Student ID Letter (Optional)",
                                       type=["pdf", "jpg", "jpeg", "png"],
                                       help="Upload your official student ID letter")
 
-        student_record = st.file_uploader("Student Record (Required)",
+        student_record = st.file_uploader("Student Record (Optional)",
                                           type=["pdf", "jpg", "jpeg", "png"],
                                           help="Upload your official student record")
 
-        transcript = st.file_uploader("Academic Transcript (Required)",
+        transcript = st.file_uploader("Academic Transcript (Optional)",
                                       type=["pdf", "jpg", "jpeg", "png"],
                                       help="Upload your academic transcript")
-                                      
+
         diploma = st.file_uploader("Diploma (Optional)",
                                  type=["pdf", "jpg", "jpeg", "png"],
                                  help="Upload your diploma certificate if available")
-        
+
         graduation_letter = st.file_uploader("Graduation Letter (Optional)",
                                            type=["pdf", "jpg", "jpeg", "png"],
                                            help="Upload your graduation confirmation letter if available")
@@ -207,29 +207,21 @@ def render_document_upload():
             st.rerun()
 
         if validate_button:
-            # Check required documents
-            missing_docs = []
-            if student_id is None:
-                missing_docs.append("Student ID Letter")
-            if student_record is None:
-                missing_docs.append("Student Record")
-            if transcript is None:
-                missing_docs.append("Academic Transcript")
+            # All documents are optional, proceed if at least one document is uploaded
+            if not any([student_id, student_record, transcript, diploma, graduation_letter, union_letter]):
+                st.warning("Please upload at least one document for validation")
+                return
 
-            if missing_docs:
-                st.error(
-                    f"Please upload the following required documents: {', '.join(missing_docs)}")
-            else:
-                # Store uploaded documents in session state
-                st.session_state.documents = {
-                    'student_id': student_id,
-                    'student_record': student_record,
-                    'transcript': transcript,
-                    'diploma': diploma,
-                    'graduation_letter': graduation_letter,
-                    'union_letter': union_letter
-                }
+            # Store uploaded documents in session state
+            st.session_state.documents = {
+                'student_id': student_id,
+                'student_record': student_record,
+                'transcript': transcript,
+                'diploma': diploma,
+                'graduation_letter': graduation_letter,
+                'union_letter': union_letter
+            }
 
-                # Move to next step
-                st.session_state.step = 4
-                st.rerun()
+            # Move to next step
+            st.session_state.step = 4
+            st.rerun()
