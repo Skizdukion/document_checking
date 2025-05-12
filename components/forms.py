@@ -180,6 +180,14 @@ def render_document_upload():
         transcript = st.file_uploader("Academic Transcript (Required)",
                                       type=["pdf", "jpg", "jpeg", "png"],
                                       help="Upload your academic transcript")
+                                      
+        diploma = st.file_uploader("Diploma (Optional)",
+                                 type=["pdf", "jpg", "jpeg", "png"],
+                                 help="Upload your diploma certificate if available")
+        
+        graduation_letter = st.file_uploader("Graduation Letter (Optional)",
+                                           type=["pdf", "jpg", "jpeg", "png"],
+                                           help="Upload your graduation confirmation letter if available")
 
         union_letter = st.file_uploader("Student Union Letter (Optional)",
                                         type=["pdf", "jpg", "jpeg", "png"],
@@ -216,6 +224,8 @@ def render_document_upload():
                     'student_id': student_id,
                     'student_record': student_record,
                     'transcript': transcript,
+                    'diploma': diploma,
+                    'graduation_letter': graduation_letter,
                     'union_letter': union_letter
                 }
 
