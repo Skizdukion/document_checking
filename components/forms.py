@@ -15,7 +15,7 @@ def render_personal_form():
                                  help="Enter your full name as it appears on your documents")
 
             dob = st.date_input("Date of Birth",
-                                value=datetime(1998, 8, 11),
+                                # value=datetime(1998, 8, 11),
                                 min_value=datetime(1940, 1, 1),
                                 max_value=datetime.now(),
                                 help="Select your date of birth")
