@@ -34,11 +34,28 @@ def main():
 
     if 'validation_results' not in st.session_state:
         st.session_state.validation_results = None
+        
+    # Add sidebar for navigation
+    with st.sidebar:
+        st.title("Navigation")
+        if st.button("Start New Validation"):
+            # Reset all session state
+            for key in ['step', 'personal_data', 'academic_data', 'documents', 'validation_results']:
+                if key in st.session_state:
+                    del st.session_state[key]
+            st.rerun()
+        
+        # Only show View History button if user has completed personal info step
+        if 'email' in st.session_state.personal_data and st.session_state.personal_data['email']:
+            if st.button("View Validation History"):
+                st.session_state.step = 5  # History step
+                st.rerun()
 
-    # Progress bar for steps
-    progress_text = f"Step {st.session_state.step} of 4"
-    progress_value = st.session_state.step / 4
-    st.progress(progress_value, text=progress_text)
+    # Progress bar for steps (only show for steps 1-4)
+    if st.session_state.step <= 4:
+        progress_text = f"Step {st.session_state.step} of 4"
+        progress_value = st.session_state.step / 4
+        st.progress(progress_value, text=progress_text)
 
     # Display different forms based on current step
     if st.session_state.step == 1:
@@ -83,13 +100,9 @@ def main():
         # Display validation results
         display_validation_results(st.session_state.validation_results)
 
-        # Reset button
-        if st.button("Start New Validation"):
-            # Reset all session state
-            for key in ['step', 'personal_data', 'academic_data', 'documents', 'validation_results']:
-                if key in st.session_state:
-                    del st.session_state[key]
-            st.rerun()
+    elif st.session_state.step == 5:
+        st.subheader("Validation History")
+        render_validation_history()
 
 
 if __name__ == "__main__":
