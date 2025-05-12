@@ -11,41 +11,42 @@ def render_personal_form():
         with col1:
             name = st.text_input("Full Name",
                                  value=st.session_state.personal_data.get(
-                                     'name', ''),
+                                     'name', 'Bader Mahmoud Abu Zaid'),
                                  help="Enter your full name as it appears on your documents")
 
             dob = st.date_input("Date of Birth",
+                                value=datetime(1998, 8, 11),
                                 min_value=datetime(1940, 1, 1),
                                 max_value=datetime.now(),
                                 help="Select your date of birth")
 
             citizenship = st.text_input("Citizenship/Nationality",
                                         value=st.session_state.personal_data.get(
-                                            'citizenship', ''),
+                                            'citizenship', 'Jordan'),
                                         help="Enter your citizenship or nationality")
 
             language = st.selectbox("Preferred Language",
                                     options=["English", "Spanish", "French",
                                              "German", "Chinese", "Arabic", "Other"],
-                                    index=0,
+                                    index=5,  # Arabic
                                     help="Select your preferred language")
 
         with col2:
             gender = st.selectbox("Gender", 
                                   options=["Male", "Female", "Non-binary", "Prefer not to say", "Other"],
-                                  index=3,
+                                  index=0,  # Male
                                   help="Select your gender")
             
             email = st.text_input("Email Address", 
-                                value=st.session_state.personal_data.get('email', ''),
+                                value=st.session_state.personal_data.get('email', 'baderabuzaid@gmail.com'),
                                 help="Enter your email address")
             
             phone = st.text_input("Phone Number", 
-                                value=st.session_state.personal_data.get('phone', ''),
+                                value=st.session_state.personal_data.get('phone', 'Egypt+20 1006854538'),
                                 help="Enter your phone number")
             
             address = st.text_area("Transcripts Address During your period of study", 
-                                 value=st.session_state.personal_data.get('address', ''),
+                                 value=st.session_state.personal_data.get('address', '90th South Str 5th Settlement Cairo New Cairo 11835'),
                                  help="Enter the address that appears on your transcripts during your study period")
         
         # Form submission
@@ -83,16 +84,16 @@ def render_academic_form():
 
         with col1:
             university = st.text_input("University/Institution", 
-                                     value=st.session_state.academic_data.get('university', ''),
+                                     value=st.session_state.academic_data.get('university', 'University of Southampton'),
                                      help="Enter the name of your university or institution")
             
             degree_level = st.selectbox("Degree Level", 
                                       options=["Associate", "Bachelor", "Master", "Doctorate", "Certificate", "Diploma", "Other"],
-                                      index=1,
+                                      index=1,  # Bachelor
                                       help="Select your degree level")
             
             major = st.text_input("Major/Field of Study", 
-                                value=st.session_state.academic_data.get('major', ''),
+                                value=st.session_state.academic_data.get('major', 'Bachelor of Mechatronic Engineering (BEng)'),
                                 help="Enter your major or field of study")
             
 
@@ -100,22 +101,22 @@ def render_academic_form():
         with col2:
             study_mode = st.selectbox("Mode of Study", 
                                     options=["Full-time", "Part-time", "Mixed Mode (Part Time and Online Study)", "Distance Learning", "Exchange Program", "Other"],
-                                    index=0,
+                                    index=2,  # Mixed Mode
                                     help="Select your mode of study")
             
             grade = st.selectbox("Grade for Transcripts", 
                                 options=["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "Pass", "Fail"],
-                                index=0,
+                                index=0,  # A
                                 help="Select your grade for transcripts")
             
             graduation_year = st.selectbox("Year of Graduation", 
                                         options=[str(year) for year in range(datetime.now().year - 10, datetime.now().year + 10)],
-                                        index=5,
+                                        index=list(str(year) for year in range(datetime.now().year - 10, datetime.now().year + 10)).index('2024'),
                                         help="Select your graduation year")
             
             graduation_season = st.selectbox("Graduation Season", 
                                           options=["Spring", "Summer", "Autumn", "Winter"],
-                                          index=0,
+                                          index=2,  # Autumn
                                           help="Select your graduation season")
         
         # Navigation buttons
