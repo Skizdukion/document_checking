@@ -2,7 +2,7 @@ import streamlit as st
 from components.forms import render_personal_form, render_academic_form, render_document_upload
 from components.results import display_validation_results
 from utils.document_processor import process_documents
-from utils.validator import validate_documents
+from utils.ai_validator import validate_with_ai
 
 
 def main():
@@ -52,13 +52,14 @@ def main():
         render_document_upload()
 
     elif st.session_state.step == 4:
-        st.subheader("Step 4: Validation Results")
+        st.subheader("Step 4: AI-Powered Validation Results")
+        st.markdown("_Documents are being analyzed by our AI system using Google's Gemini model_")
 
         # Process and validate documents if not already done
         if st.session_state.validation_results is None:
             with st.spinner("Processing and validating documents..."):
                 processed_docs = process_documents(st.session_state.documents)
-                validation_results = validate_documents(
+                validation_results = validate_with_ai(
                     processed_docs,
                     st.session_state.personal_data,
                     st.session_state.academic_data
